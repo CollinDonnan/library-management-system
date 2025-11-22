@@ -1,3 +1,5 @@
+package com.example;
+
 import views.CliView;
 import controller.Controller;
 import model.db;

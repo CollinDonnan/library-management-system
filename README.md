@@ -1,5 +1,5 @@
 # library-management-system
 
 # Installation
- javac */*.java *.java
- java Main
+mvn compile
+mvn exec:java -Dexec.mainClass="com.example.Main"
