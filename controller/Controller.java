@@ -1,14 +1,15 @@
 package controller;
-import views.CliView;
-import controller.MenuOption;
 
+import model.db;
+import views.CliView;
 
 public class Controller {
-    private CliView view;
+    private final CliView view;
+    private final db database;
 
     public Controller() {
         view = new CliView();
-        // Constructor logic if needed
+        database = new db();
     }
 
     public void start() {
@@ -19,6 +20,10 @@ public class Controller {
     public void getInput(){
         while (true) {
             MenuOption choice = view.getUserMenuChoice();
+            if (choice == null) {
+                view.displayErrorMessage("Please choose a valid option.");
+                continue;
+            }
             switch (choice) {
                 case VIEW_ALL_BOOKS:
                     viewAllBooks();
@@ -30,10 +35,11 @@ public class Controller {
                     view.displayBookDetails(details);
                     break;
                 case ADD_NEW_BOOK:
-                    // Example data, in real scenario, get from user
-                    String title = "Sample Book";
-                    String author = "Author Name";
-                    addBook(title, author);
+                    String title = view.promptForString("Enter book title: ");
+                    String author = view.promptForString("Enter author name: ");
+                    String isbn = view.promptForString("Enter ISBN: ");
+                    int available = view.promptForInt("Enter quantity available: ");
+                    addBook(title, author, isbn, available);
                     break;
                 case UPDATE_BOOK:
                     // Example data, in real scenario, get from user
@@ -54,9 +60,13 @@ public class Controller {
         }
     }
     
-    public void addBook(String title, String author) {
-        //adding db logic later
-        System.out.println("Adding book: " + title + " by " + author);
+    public void addBook(String title, String author, String isbn, int available) {
+        boolean success = database.addBook(title, author, isbn, available);
+        if (success) {
+            System.out.println("Book added successfully.");
+        } else {
+            System.out.println("Failed to add book.");
+        }
     }
 
     public void viewAllBooks() {
@@ -64,9 +74,13 @@ public class Controller {
         System.out.println("Viewing all books in the library.");
     }
 
-    public void deleteBook(int bookId) {
-        //adding db logic later
-        System.out.println("Deleting book with ID: " + bookId);
+    public void deleteBook(String name) {
+        boolean success = database.deleteBook(name);
+                if (success) {
+            System.out.println("Book added successfully.");
+        } else {
+            System.out.println("Failed to add book.");
+        }
     }
 
     public void updateBook(int bookId, String newTitle, String newAuthor) {

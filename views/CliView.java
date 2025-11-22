@@ -42,4 +42,21 @@ public class CliView {
     public void displayErrorMessage(String errorMessage) {
         System.err.println("Error: " + errorMessage);
     }
+
+    public String promptForString(String prompt) {
+        System.out.print(prompt);
+        return input.nextLine().trim();
+    }
+
+    public int promptForInt(String prompt) {
+        while (true) {
+            System.out.print(prompt);
+            String line = input.nextLine().trim();
+            try {
+                return Integer.parseInt(line);
+            } catch (NumberFormatException e) {
+                System.out.println("Please enter a valid number.");
+            }
+        }
+    }
 }
