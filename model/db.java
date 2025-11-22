@@ -68,7 +68,49 @@ public class db {
         }
     }
 
+    public String viewAllBooks() {
+        if (connection == null) {
+            System.err.println("Cannot view books because database connection is not available.");
+            return "Error: No database connection.";
+        }
 
+        StringBuilder books = new StringBuilder();
+        String sql = "SELECT * FROM Library";
+
+        try (PreparedStatement stmt = connection.prepareStatement(sql)) {
+            ResultSet rs = stmt.executeQuery();
+            while (rs.next()) {
+                books.append("ID: ").append(rs.getInt("id"))
+                        .append(", Title: ").append(rs.getString("title"))
+                        .append(", Author: ").append(rs.getString("author"))
+                        .append(", ISBN: ").append(rs.getString("isbn"))
+                        .append(", Available: ").append(rs.getInt("available"))
+                        .append("\n");
+            }
+        } catch (SQLException e) {
+            System.err.println("Error fetching books: " + e.getMessage());
+            return "Error: " + e.getMessage();
+        }
+
+        return books.toString();
+    }
+
+    public boolean checkoutBook(String name){
+        if (connection == null) {
+            System.err.println("Cannot checkout book because database connection is not available.");
+            return false;
+        }
+
+        String sql = "UPDATE Library SET availible = availible - 1 WHERE title = ? AND availible > 0";
+
+        try (PreparedStatement stmt = connection.prepareStatement(sql)) {
+            stmt.setString(1, name);
+            return stmt.executeUpdate() > 0;
+        } catch (SQLException e) {
+            System.err.println("Error checking out book: " + e.getMessage());
+            return false;
+        }
+    }
 
     public void close() {
         if (connection == null) {
